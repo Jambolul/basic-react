@@ -10,13 +10,14 @@ import Layout from "./views/Layout"
 const App = () => {
 
   return (
-    <Router>
+    <Router basename={import.meta.env.BASE_URL}>
       <Routes>
-        <Route element={<Layout/>} />
+        <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/single" element={<Single />} />
+        </Route>
       </Routes>
     </Router>
   )

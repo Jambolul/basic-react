@@ -5,7 +5,7 @@ import { fetchData } from "../lib/functions";
 
 const Home = () => {
 
-  const [mediaArray, setMediaArray] = useState<MediaItem[]>([])
+  const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([])
 //console.log(mediaArray);
 
 const getMedia = async () => {

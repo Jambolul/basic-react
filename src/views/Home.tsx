@@ -1,45 +1,35 @@
-import { MediaItem } from "../types/DBTypes";
+import { MediaItem, MediaItemWithOwner, User } from "../types/DBTypes";
 import MediaRow from "../components/MediaRow";
+import { useEffect, useState } from "react";
+import { fetchData } from "../lib/functions";
 
 const Home = () => {
 
-  const mediaArray: MediaItem[] = [
-    {
-      media_id: 8,
-      user_id: 5,
-      filename: 'https://place-hold.it/1200x800.jpg&text=Pic1&fontsize=120',
-      thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb2&fontsize=20',
-      filesize: 170469,
-      media_type: 'image/jpeg',
-      title: 'Picture 1',
-      description: 'This is a placeholder picture.',
-      created_at: '2024-01-07T20:49:34.000Z',
-    },
-    {
-      media_id: 9,
-      user_id: 7,
-      filename: 'https://place-hold.it/800x600.jpg&text=Pic2&fontsize=72',
-      thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb3&fontsize=20',
-      filesize: 1002912,
-      media_type: 'image/jpeg',
-      title: 'Pic 2',
-      description: '',
-      created_at: '2024-01-07T21:32:27.000Z',
-    },
-    {
-      media_id: 17,
-      user_id: 2,
-      filename:
-        'http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_normal.mp4',
-      thumbnail: 'http://place-hold.it/320/240.jpg&text=Thumb1&fontsize=20',
-      filesize: 1236616,
-      media_type: 'video/mp4',
-      title: 'Bunny',
-      description: 'Butterflies fly around the bunny.',
-      created_at: '2024-01-07T20:48:13.000Z',
-    },
-  ];
+  const [mediaArray, setMediaArray] = useState<MediaItem[]>([])
 //console.log(mediaArray);
+
+const getMedia = async () => {
+  try {
+    const mediaItems = await fetchData<MediaItem[]>(import.meta.env.VITE_MEDIA_API + "/media");
+
+    const itemsWithOwner: MediaItemWithOwner[] = await Promise.all(mediaItems.map(async (item) => {
+      const owner = await fetchData<User>(import.meta.env.VITE_AUTH_API + "/users/" + item.user_id)
+      const itemWithOwner: MediaItemWithOwner = {...item, username: owner.username}
+      return itemWithOwner;
+    }))
+
+    setMediaArray(itemsWithOwner);
+    console.log("mediaArray updated", itemsWithOwner);
+  } catch (error) {
+    console.error("Error fetching media", error);
+  }
+}
+
+useEffect(() => {
+  getMedia();
+}, [])
+
+
   return (
     <>
     <h2>My Media</h2>
@@ -52,6 +42,7 @@ const Home = () => {
           <th>Created</th>
           <th>Size</th>
           <th>Type</th>
+          <th>Owner</th>
         </tr>
       </thead>
       <tbody>

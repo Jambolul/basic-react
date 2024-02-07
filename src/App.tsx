@@ -7,9 +7,11 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Layout from "./views/Layout"
 
 
+
 const App = () => {
 
   return (
+    <>
     <Router basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route element={<Layout />}>
@@ -20,6 +22,7 @@ const App = () => {
         </Route>
       </Routes>
     </Router>
+    </>
   )
 }
 

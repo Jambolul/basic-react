@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
 import {MediaItem, MediaItemWithOwner, User} from "../types/DBTypes";
 import {fetchData} from "../lib/functions";
+import { Credentials } from "../types/LocalTypes";
+import { LoginResponse } from "../types/MessageTypes";
 
 const useMedia = (): MediaItemWithOwner[] => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
@@ -32,4 +34,17 @@ const useUser = () => {
   // todo: implement network connections for auth/user server
 };
 
-export {useMedia, useUser};
+const useAuthentication = () => {
+  const postLogin = async (creds) => {
+    try {
+      return await await fetchData<LoginResponse>(
+        import.meta.env.VITE_AUTH_API + '/auth/login/', {method: 'POST', body: JSON.stringify(creds), headers: {'Content-Type': 'application/json'}});
+    } catch (error) {
+      console.error('postLogin failed', error);
+    }
+  }
+
+  return {postLogin};
+}
+
+export {useMedia, useUser, useAuthentication};

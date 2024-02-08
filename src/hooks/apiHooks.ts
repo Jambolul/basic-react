@@ -1,8 +1,8 @@
+import { Credentials } from './../types/LocalTypes';
 import {useEffect, useState} from "react";
 import {MediaItem, MediaItemWithOwner, User} from "../types/DBTypes";
 import {fetchData} from "../lib/functions";
-import { Credentials } from "../types/LocalTypes";
-import { LoginResponse } from "../types/MessageTypes";
+import { LoginResponse, UserResponse } from "../types/MessageTypes";
 
 const useMedia = (): MediaItemWithOwner[] => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
@@ -32,10 +32,42 @@ const useMedia = (): MediaItemWithOwner[] => {
 
 const useUser = () => {
   // todo: implement network connections for auth/user server
+  const getUserByToken = async (token: string) => {
+    const options = {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      }
+    }
+    return await fetchData<UserResponse>(
+      import.meta.env.VITE_AUTH_API + '/user/token/',
+      options
+    )
+  }
+
+  const postUser = async (user: {
+    username: string,
+    password: string,
+    email: string,
+
+  }) => {
+    const options: RequestInit = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    }
+    await fetchData<UserResponse>(
+      import.meta.env.VITE_AUTH_API + '/users',
+      options
+    )
+  }
+
+  return {getUserByToken, postUser};
 };
 
 const useAuthentication = () => {
-  const postLogin = async (creds) => {
+  const postLogin = async (creds: Credentials) => {
     try {
       return await await fetchData<LoginResponse>(
         import.meta.env.VITE_AUTH_API + '/auth/login/', {method: 'POST', body: JSON.stringify(creds), headers: {'Content-Type': 'application/json'}});

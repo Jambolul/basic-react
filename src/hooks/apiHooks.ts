@@ -44,12 +44,8 @@ const useUser = () => {
     )
   }
 
-  const postUser = async (user: {
-    username: string,
-    password: string,
-    email: string,
+  const postUser = async (user:Record<string, string>) =>{
 
-  }) => {
     const options: RequestInit = {
       method: 'POST',
       headers: {

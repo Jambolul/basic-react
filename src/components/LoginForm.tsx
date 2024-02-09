@@ -1,6 +1,6 @@
-import useForm from '../hooks/formHooks';
+import {useForm} from '../hooks/formHooks';
 import {Credentials} from '../types/LocalTypes';
-import useUserContext from '../hooks/ContextHooks';
+import {useUserContext} from '../hooks/ContextHooks';
 
 const LoginForm = () => {
   const {handleLogin} = useUserContext();

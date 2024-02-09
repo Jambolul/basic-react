@@ -1,18 +1,17 @@
-// ProtectedRoute.tsx
-import {Navigate, useLocation} from 'react-router-dom';
-import {useUserContext} from '../hooks/ContextHooks';
+// ContextHooks.ts
+import {useContext} from 'react';
+import {UserContext} from '../contexts/UserContext';
 
-const ProtectedRoute = ({children}: {children: React.ReactNode}) => {
-  const {user} = useUserContext();
-  const location = useLocation();
+// Current recommendation is to use custom hook instead of the context directly
+// this way we don't have errors when UserContext is not defined or null (thats why we have the if statement)
 
-  if (!user) {
-    console.log('lokaatio', location);
-    // replace and state are used to redirect to origin when page is refreshed
-    return <Navigate to="/" replace state={{from: location}} />;
+const useUserContext = () => {
+  const context = useContext(UserContext);
+  if (!context) {
+    throw new Error('useUserContext must be used within an UserProvider');
   }
 
-  return children;
+  return context;
 };
 
-export default ProtectedRoute;
+export {useUserContext};

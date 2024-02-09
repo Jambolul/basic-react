@@ -1,32 +1,25 @@
-import { useNavigate } from "react-router-dom";
-import { useAuthentication } from "../hooks/apiHooks";
-import useForm from "../hooks/formHooks";
-import { Credentials } from "../types/LocalTypes";
+import useForm from '../hooks/formHooks';
+import {Credentials} from '../types/LocalTypes';
+import useUserContext from '../hooks/ContextHooks';
 
 const LoginForm = () => {
-  const {postLogin} = useAuthentication();
-  const navigate = useNavigate();
-  const initValues: Credentials = {username: "", password: ""}
+  const {handleLogin} = useUserContext();
+
+  const initValues: Credentials = {username: '', password: ''};
 
   const doLogin = async () => {
-    try {
-    console.log("submit callback, inputs:", inputs);
-    const loginResult = await postLogin(inputs as Credentials);
-    if(loginResult) {
-    localStorage.setItem('token', loginResult.token);
-    navigate("/")
-    }
-  } catch (error) {
-    console.error('postLogin failed', error);
-  }
-}
+    handleLogin(inputs as Credentials);
+  };
 
-  const {handleSubmit, handleInputChange, inputs} = useForm(doLogin, initValues)
+  const {handleSubmit, handleInputChange, inputs} = useForm(
+    doLogin,
+    initValues,
+  );
 
   return (
     <>
-    <h2>Login</h2>
-    <form onSubmit={handleSubmit}>
+      <h3>Login</h3>
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="UserWithLevelname">Username</label>
           <input
@@ -35,7 +28,7 @@ const LoginForm = () => {
             id="UserWithLevelname"
             onChange={handleInputChange}
             autoComplete="username"
-            />
+          />
         </div>
         <div>
           <label htmlFor="loginpassword">Password</label>
@@ -48,9 +41,9 @@ const LoginForm = () => {
           />
         </div>
         <button type="submit">Login</button>
-    </form>
+      </form>
     </>
-  )
-}
+  );
+};
 
 export default LoginForm;

@@ -2,9 +2,9 @@ import {useEffect, useState} from 'react';
 import {MediaItem, MediaItemWithOwner, User} from '../types/DBTypes';
 import {fetchData} from '../lib/functions';
 import {Credentials} from '../types/LocalTypes';
-import {LoginResponse, UserResponse} from '../types/MessageTypes';
+import {LoginResponse, MediaResponse, UploadResponse, UserResponse} from '../types/MessageTypes';
 
-const useMedia = (): MediaItemWithOwner[] => {
+const useMedia = () => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
 
   const getMedia = async () => {
@@ -36,8 +36,31 @@ const useMedia = (): MediaItemWithOwner[] => {
     getMedia();
   }, []);
 
-  return mediaArray;
+  const postMedia = (file: UploadResponse, inputs: Record<string, string>, token: string) => {
+    const media: Omit<MediaItem, "media_id" | "user_id" | "thumbnail" | "created_at"> = {
+      title: inputs.title,
+      description: inputs.description,
+      filename: file.data.filename,
+      filesize: file.data.filesize,
+      media_type: file.data.media_type,
+    };
+    const options = {
+      method: 'POST',
+      body: JSON.stringify(media),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+    };
+    return fetchData<MediaResponse>(
+      import.meta.env.VITE_MEDIA_API + '/media',
+      options,
+    );
+  }
+
+  return {mediaArray, postMedia};
 };
+
 
 const useUser = () => {
   // TODO: implement network functions for auth server user endpoints
@@ -92,4 +115,25 @@ const useAuthentication = () => {
   return {postLogin};
 };
 
-export {useMedia, useUser, useAuthentication};
+const useFile = () => {
+  const postFile = async (file: File, token: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const options = {
+      method: 'POST',
+      body: formData,
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    };
+    return await fetchData<UploadResponse>(
+      import.meta.env.VITE_UPLOAD_SERVER + '/upload',
+      options,
+    );
+  }
+  return {postFile};
+}
+
+
+
+export {useMedia, useUser, useAuthentication, useFile};

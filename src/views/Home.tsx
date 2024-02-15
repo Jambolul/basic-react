@@ -2,7 +2,6 @@ import MediaRow from '../components/MediaRow';
 import {useMedia} from '../hooks/apiHooks';
 
 const Home = () => {
-
   const {mediaArray} = useMedia();
 
   return (
@@ -11,21 +10,19 @@ const Home = () => {
       <table>
         <thead>
           <tr>
-            <th>Thumbnail</th>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Created</th>
-            <th>Size</th>
-            <th>Type</th>
-            <th>Owner</th>
+            <th className="w-3/12 border border-slate-700">Thumbnail</th>
+            <th className="w-1/12 border border-slate-700">Title</th>
+            <th className="w-2/12 border border-slate-700">Description</th>
+            <th className="w-1/12 border border-slate-700">Created</th>
+            <th className="w-1/12 border border-slate-700">Size</th>
+            <th className="w-1/12 border border-slate-700">Type</th>
+            <th className="w-1/12 border border-slate-700">Owner</th>
+            <th className="w-2/12 border border-slate-700">Actions</th>
           </tr>
         </thead>
         <tbody>
           {mediaArray.map((item) => (
-            <MediaRow
-              key={item.media_id}
-              item={item}
-            />
+            <MediaRow key={item.media_id} item={item} />
           ))}
         </tbody>
       </table>

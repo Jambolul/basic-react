@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {Like, MediaItem, MediaItemWithOwner, User} from '../types/DBTypes';
+import {Comment, Like, MediaItem, MediaItemWithOwner, User} from '../types/DBTypes';
 import {fetchData} from '../lib/functions';
 import {Credentials} from '../types/LocalTypes';
 import {
@@ -213,7 +213,39 @@ const useLike = () => {
     );
   };
 
-  return {postLike, deleteLike, getCountByMediaId, getUserLike};
+  const useComment = () => {
+    const postComment = async (
+       comment_text: string,
+       media_id: number,
+       token: string) => {
+        // TODO: Send a POST request to /comments with the comment object and the token in the Authorization header.
+        const options: RequestInit = {
+          method: 'POST',
+          headers: {
+            Authorization: 'Bearer ' + token,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({comment_text, media_id}),
+        }
+        return await fetchData<MessageResponse>(
+          import.meta.env.VITE_MEDIA_API + '/comments',
+          options,
+        );
+    };
+
+    const getComments = async (media_id: number) => {
+        // TODO: Send a GET request to /comments/:media_id to get the comments.
+        return await fetchData<Comment[]>(
+          import.meta.env.VITE_MEDIA_API + '/comments/' + media_id,
+        );
+      };
+
+    return { postComment, getComments };
+  };
+
+  return {postLike, deleteLike, getCountByMediaId, getUserLike, useComment};
 };
+
+
 
 export {useMedia, useUser, useAuthentication, useFile, useLike};

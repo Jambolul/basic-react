@@ -1,6 +1,6 @@
 # Hybrid Apps - React example
 
-Open [this link in browser](https://users.metropolia.fi/~mattpe/react-routing/) to see the app in action.
+Open [this link in browser](https://users.metropolia.fi/~jamina/react-graphql/) to see the app in action.
 
 ---
 
@@ -28,7 +28,7 @@ export default {
     project: ['./tsconfig.json', './tsconfig.node.json'],
     tsconfigRootDir: __dirname,
   },
-};
+}
 ```
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`

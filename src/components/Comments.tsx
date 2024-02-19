@@ -3,7 +3,8 @@ import {useUserContext} from '../hooks/ContextHooks';
 import {useForm} from '../hooks/formHooks';
 import {useCommentStore} from '../store';
 import {MediaItemWithOwner} from '../types/DBTypes';
-import {useComment} from '../hooks/apiHooks';
+import {useComment} from '../hooks/graphQLHooks';
+// import {useComment} from '../hooks/apiHooks';
 
 const Comments = ({item}: {item: MediaItemWithOwner}) => {
   const {comments, setComments} = useCommentStore();

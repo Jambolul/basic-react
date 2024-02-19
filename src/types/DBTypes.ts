@@ -65,6 +65,19 @@ type Tag = {
   tag_name: string;
 };
 
+type Status = {
+  status_id: number;
+  status_name: "Watching" | "Completed" | "Dropped" | "Plan to Watch";
+};
+
+type MediaItemStatus = {
+  media_id: number;
+  status_id: number;
+  user_id: number;
+};
+
+type MediaItemStatusResult = MediaItemStatus & Status;
+
 type MediaItemTag = {
   // media_id: number; // REST API
   // tag_id: number; // REST API
@@ -140,4 +153,5 @@ export type {
   TokenContent,
   MediaItemWithOwner,
   FileInfo,
+  MediaItemStatusResult,
 };

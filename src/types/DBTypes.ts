@@ -36,6 +36,11 @@ type Comment = {
   user_id: number;
   comment_text: string;
   created_at: Date;
+  user: {
+    username: string;
+    user_id: number;
+    // Include other user properties if needed
+  };
 };
 
 type Like = {

@@ -43,7 +43,8 @@ const Likes = ({item}: {item: MediaItemWithOwner}) => {
       return;
     }
     try {
-      const userLike = await getUserLike(item.media_id, token);
+      const userLikeResponse = await getUserLike(item.media_id, token);
+      const userLike: Like | null = userLikeResponse.length > 0 ? {...userLikeResponse[0], media_id: '', created_at: new Date()} : null;
       likeDispatch({type: 'like', like: userLike});
     } catch (e) {
       likeDispatch({type: 'like', like: null});

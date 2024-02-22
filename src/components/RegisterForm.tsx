@@ -1,10 +1,13 @@
 import {useState} from 'react';
 // import {useUser} from '../hooks/apiHooks';
 import {useUser} from '../hooks/graphQLHooks';
+import { useUserContext } from '../hooks/ContextHooks';
 import {useForm} from '../hooks/formHooks';
+import { Credentials } from '../types/LocalTypes';
 
 const RegisterForm = () => {
   const {postUser} = useUser();
+  const {handleLogin} = useUserContext();
   const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
   const [emailAvailable, setEmailAvailable] = useState<boolean>(true);
 
@@ -14,6 +17,7 @@ const RegisterForm = () => {
     try {
       if (usernameAvailable && emailAvailable) {
         await postUser(inputs);
+        await handleLogin(inputs as Credentials);
       }
     } catch (error) {
       console.log((error as Error).message);
@@ -22,6 +26,7 @@ const RegisterForm = () => {
 
   const {handleSubmit, handleInputChange, inputs} = useForm(
     doRegister,
+
     initValues,
   );
   const {getUsernameAvailable, getEmailAvailable} = useUser();

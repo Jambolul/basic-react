@@ -2,12 +2,29 @@ import {Link} from 'react-router-dom';
 import {MediaItemWithOwner} from '../types/DBTypes';
 import {useUpdateContext, useUserContext} from '../hooks/ContextHooks';
 import {useMedia} from '../hooks/graphQLHooks';
+import { useEffect, useState } from 'react';
 
 const MediaRow = (props: {item: MediaItemWithOwner}) => {
   const {item} = props;
   const {user} = useUserContext();
-  const {deleteMedia} = useMedia();
+  const {deleteMedia, getRatingsByMediaID} = useMedia();
+  const [rating, setRating] = useState<number | string | null>(null);
   const {update, setUpdate} = useUpdateContext();
+
+  useEffect(() => {
+    if (item.media_id) {
+      getRatingsByMediaID(item.media_id.toString()).then((rating) => {
+        if (rating) {
+          setRating(rating);
+        } else {
+          setRating('No rating');
+        }
+      }).catch(error => {
+        console.error('Failed to fetch rating:', error);
+        setRating('Error fetching rating');
+      });
+    }
+  }, [item.media_id, getRatingsByMediaID]);
 
   const deleteHandler = async () => {
     const cnf = confirm('Are you sure you want to delete this media?');
@@ -43,10 +60,7 @@ const MediaRow = (props: {item: MediaItemWithOwner}) => {
       <td className="border border-slate-700">
         {new Date(item.created_at).toLocaleString('fi-FI')}
       </td>
-      <td className="border border-slate-700">{item.filesize}</td>
-      <td className="border border-slate-700">
-        {item.media_type.replace('&#x2F;', '/')}
-      </td>
+      <td className="border border-slate-700">{rating}/10</td>
       <td className="border border-slate-700">{item.owner.username}</td>
       <td className="border border-slate-700">
         <div className="flex flex-col">
@@ -57,28 +71,35 @@ const MediaRow = (props: {item: MediaItemWithOwner}) => {
           >
             View
           </Link>
-          {user &&
-            (user.user_id === item.user_id || user.level_name === 'Admin') && (
-              <>
-                <button
-                  className="bg-slate-700 p-2 hover:bg-slate-950"
-                  onClick={() => console.log('modify', item)}
-                >
-                  Modify
-                </button>
-                <button
-                  className="bg-slate-800 p-2 hover:bg-slate-950"
-                  onClick={deleteHandler}
-                >
-                  Delete
-                </button>
-              </>
-            )}
+{user && (
+  <>
+{/*   {console.log(user.user_id)}
+  {console.log(item.user_id)} */}
+
+    {(Number(user.user_id) === Number(item.user_id) || user.level_name === 'Admin') ? (
+      <>
+        <button
+          className="bg-slate-700 p-2 hover:bg-slate-950"
+          onClick={() => console.log('modify', item)}
+        >
+          Modify
+        </button>
+        <button
+          className="bg-slate-800 p-2 hover:bg-slate-950"
+          onClick={deleteHandler}
+        >
+          Delete
+        </button>
+      </>
+    ) : null}
+  </>
+)}
         </div>
         <p>Comments: {item.comments_count}</p>
       </td>
     </tr>
   );
-};
+}
+
 
 export default MediaRow;

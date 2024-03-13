@@ -3,6 +3,7 @@ import {useState} from 'react';
 const useForm = <T>(callback: () => void, initState: T) => {
   const [inputs, setInputs] = useState<T>(initState);
 
+
   const handleSubmit = (event: React.SyntheticEvent) => {
     if (event) {
       event.preventDefault();
@@ -20,10 +21,12 @@ const useForm = <T>(callback: () => void, initState: T) => {
     }));
   };
 
+
   return {
     handleSubmit,
     handleInputChange,
     inputs,
+
   };
 };
 

@@ -14,25 +14,32 @@ const Upload = () => {
   const initValues = {
     title: '',
     description: '',
+    rating: "0",
   };
 
   const doUpload = async () => {
     try {
       const token = localStorage.getItem('token');
-      if (!token || !file) {
-        return;
-      }
-      // TODO: call postFile function (see below)
-      const fileResult = await postFile(file, token);
-      // TODO: call postMedia function (see below)
-      const mediaResult = await postMedia(fileResult, inputs, token);
-      alert(mediaResult.message);
-      // TODO: redirect to Home
-      navigate('/');
-    } catch (e) {
+        if (!token || !file) {
+          return;
+        }
+        // TODO: call postFile function (see below)
+        const fileResult = await postFile(file, token);
+        console.log(fileResult);
+        // TODO: call postMedia function (see below)
+        const mediaResult = await postMedia(fileResult, inputs, token);
+        console.log("TESTI"+ inputs);
+        console.log(mediaResult);
+
+        alert("Media uploaded");
+        // TODO: redirect to Home
+        navigate('/');
+      } catch (e) {
       console.log((e as Error).message);
     }
   };
+
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -54,7 +61,7 @@ const Upload = () => {
             Title
           </label>
           <input
-            className="m-3 w-2/3 rounded-md border border-slate-500 p-3 text-slate-950"
+            className="m-3 w-2/3 rounded-md border border-slate-500 p-3 text-slate-50"
             name="title"
             type="text"
             id="title"
@@ -66,13 +73,14 @@ const Upload = () => {
             Description
           </label>
           <textarea
-            className="m-3 w-2/3  rounded-md border border-slate-500 p-3 text-slate-950"
+            className="m-3 w-2/3  rounded-md border border-slate-500 p-3 text-slate-50"
             name="description"
             rows={5}
             id="description"
             onChange={handleInputChange}
           ></textarea>
         </div>
+
         <div className="flex w-4/5">
           <label className="w-1/3 p-6 text-end" htmlFor="file">
             File
@@ -100,7 +108,7 @@ const Upload = () => {
         </div>
         <div className="flex w-4/5 justify-end">
           <button
-            className="m-3 w-1/3 rounded-md bg-slate-600 p-3 disabled:text-slate-600"
+            className="m-3 w-1/3 rounded-md bg-slate-600 p-3 disabled:text-slate-50"
             type="submit"
             disabled={file && inputs.title.length > 3 ? false : true}
           >

@@ -11,5 +11,6 @@ export type AuthContextType = {
 type GraphQLResponse<T> = {
   data: T;
   errors?: {message: string}[];
+  message?: string;
 };
 export type {GraphQLResponse};

@@ -15,8 +15,7 @@ const Home = () => {
             <th className="w-1/12 border border-slate-700">Title</th>
             <th className="w-2/12 border border-slate-700">Description</th>
             <th className="w-1/12 border border-slate-700">Created</th>
-            <th className="w-1/12 border border-slate-700">Size</th>
-            <th className="w-1/12 border border-slate-700">Type</th>
+            <th className="w-1/12 border border-slate-700">Rating</th>
             <th className="w-1/12 border border-slate-700">Owner</th>
             <th className="w-2/12 border border-slate-700">Actions</th>
           </tr>

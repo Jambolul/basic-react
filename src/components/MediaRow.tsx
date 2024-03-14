@@ -11,6 +11,8 @@ const MediaRow = (props: {item: MediaItemWithOwner}) => {
   const [rating, setRating] = useState<number | string | null>(null);
   const {update, setUpdate} = useUpdateContext();
 
+
+
   useEffect(() => {
     if (item.media_id) {
       getRatingsByMediaID(item.media_id.toString()).then((rating) => {

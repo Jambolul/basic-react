@@ -72,7 +72,7 @@ type Tag = {
 
 type Status = {
   status_id: number;
-  status_name: "Watching" | "Completed" | "Dropped" | "Plan to Watch";
+  status_name: string;
 };
 
 type MediaItemStatus = {
@@ -160,4 +160,7 @@ export type {
   MediaItemWithOwner,
   FileInfo,
   MediaItemStatusResult,
+  Status,
+  MediaItemStatus,
+
 };

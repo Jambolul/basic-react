@@ -4,7 +4,10 @@ import {
   Like,
   MediaItem,
   MediaItemWithOwner,
+  Tag,
   User,
+
+
 } from '../types/DBTypes';
 import {fetchData, makeQuery} from '../lib/functions';
 import {Credentials, GraphQLResponse} from '../types/LocalTypes';
@@ -21,7 +24,111 @@ const useMedia = () => {
   const [mediaArray, setMediaArray] = useState<MediaItemWithOwner[]>([]);
   const {update} = useUpdateContext();
   const [ratings] = useState<number[]>([]);
+  const [tags] = useState<Tag[]>([]); // State for storing tags
 
+  const fetchTags = async (): Promise<string[]> => {
+    const query = `
+      query Query {
+        tags {
+          tag_id
+          tag_name
+        }
+      }
+    `;
+    try {
+      const result = await makeQuery<
+  GraphQLResponse<{ tags: { tag_name: string }[] }>, // First type argument
+  undefined // Second type argument (variables)
+>(query);
+      const tags = result.data.tags.map(tag => tag.tag_name);
+      return tags;
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+      return []; // Return an empty array in case of error
+    }
+  };
+
+  const fetchTagsByMediaId = async (mediaId: string): Promise<Tag[]> => {
+    const query = `
+      query Query($mediaId: ID!) {
+        mediaItem(media_id: $mediaId) {
+          tags {
+            tag_id
+            tag_name
+          }
+        }
+      }
+    `;
+    const variables = { mediaId };
+    try {
+      const result = await makeQuery<
+        GraphQLResponse<{ mediaItem: { tags: Tag[] } }>,
+        { mediaId: string }
+      >(query, variables);
+      // Adjusting this line to correctly access the tags
+      const tags = result.data.mediaItem.tags || [];
+      return tags;
+    } catch (error) {
+      console.error('Error fetching tags by media ID:', error);
+      return []; // Return an empty array in case of error
+    }
+  }
+
+  const deleteTagFromMediaItem = async (tagId: string, mediaId: string, token: string) => {
+    const mutation = `
+      mutation DeleteTagFromMediaItem($input: TagInputID!) {
+        deleteTagFromMediaItem(input: $input) {
+          message
+        }
+      }
+    `;
+    const variables = {
+      input: {
+        tag_id: tagId,
+        media_id: mediaId
+      }
+    };
+    try {
+      await makeQuery<GraphQLResponse<{ deleteTagFromMediaItem: MessageResponse }>, { input: { tag_id: string; media_id: string } }>(mutation, variables, token);
+    } catch (error) {
+      console.error('Error deleting tag from media item:', error);
+    }
+  };
+
+  const assignTagToMediaItem = async (tagName: string, mediaId: string, token: string) => {
+    // Step 1: Check for existing tags
+    const existingTags = await fetchTagsByMediaId(mediaId); // Implement this based on your API
+    if (existingTags.length > 0) {
+      // Extract the tag_id from the first tag object
+      const existingTagId = existingTags[0].tag_id;
+
+      // Then delete the existing tag from the media item
+      await deleteTagFromMediaItem(existingTagId, mediaId, token);
+    }
+
+    // Step 2: Assign the new tag
+    // Note: Adjust this to match your updated mutation if needed
+    const mutation = `
+      mutation AssignTagToMediaItem($input: TagInput!) {
+        createTag(input: $input) {
+          tag_id
+          tag_name
+        }
+      }
+    `;
+    const variables = {
+      input: {
+        tag_name: tagName,
+        media_id: mediaId
+      }
+    };
+    try {
+      const result = await makeQuery<GraphQLResponse<{ createTag: Tag }>, { input: { tag_name: string; media_id: string } }>(mutation, variables, token);
+      console.log("Tag Assignment Result:", result);
+    } catch (error) {
+      console.error('Error assigning tag to media item:', error);
+    }
+  };
 
   const getRatingsByMediaID = async (mediaId: string): Promise<number | null> => {
     const query = `
@@ -155,7 +262,7 @@ const useMedia = () => {
     }
   };
 
-  return {mediaArray, postMedia, deleteMedia, postRating, getRatingsByMediaID, ratings};
+  return {mediaArray, postMedia, deleteMedia, postRating, getRatingsByMediaID, ratings, fetchTags, tags, assignTagToMediaItem, fetchTagsByMediaId};
 };
 
 const useUser = () => {
@@ -423,6 +530,9 @@ const useComment = () => {
       throw error;
     }
   };
+
+
+
 
   return { postComment, getCommentsByMediaId };
 }

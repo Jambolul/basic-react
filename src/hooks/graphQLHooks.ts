@@ -96,18 +96,15 @@ const useMedia = () => {
   };
 
   const assignTagToMediaItem = async (tagName: string, mediaId: string, token: string) => {
-    // Step 1: Check for existing tags
-    const existingTags = await fetchTagsByMediaId(mediaId); // Implement this based on your API
+    const existingTags = await fetchTagsByMediaId(mediaId);
     if (existingTags.length > 0) {
-      // Extract the tag_id from the first tag object
+
       const existingTagId = existingTags[0].tag_id;
 
-      // Then delete the existing tag from the media item
+
       await deleteTagFromMediaItem(existingTagId, mediaId, token);
     }
 
-    // Step 2: Assign the new tag
-    // Note: Adjust this to match your updated mutation if needed
     const mutation = `
       mutation AssignTagToMediaItem($input: TagInput!) {
         createTag(input: $input) {
@@ -143,8 +140,6 @@ const useMedia = () => {
       const result = await makeQuery<GraphQLResponse<{ ratingsByMediaID: [{ rating_value: number }] }>, { mediaId: string }>(
         query, variables
       );
-      // Assuming the API returns an array of ratings, and you're interested in the first one for simplicity
-      // In a real scenario, the API might return only the rating for the current user, or you might need to filter it
       if (result.data && result.data.ratingsByMediaID && result.data.ratingsByMediaID.length > 0) {
         return result.data.ratingsByMediaID[0].rating_value; // Return the first rating value
       } else {

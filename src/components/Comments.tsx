@@ -51,57 +51,54 @@ const Comments = ({item}: {item: MediaItemWithOwner}) => {
   }, []);
 
   return (
+<>
+  {user && (
     <>
-      {user && (
-        <>
-          <h3 className="text-xl">Post Comment</h3>
-          <form onSubmit={handleSubmit} ref={formRef}>
-            <div className="flex w-4/5">
-              <label className="w-1/3 p-6 text-end" htmlFor="comment">
-                Comment
-              </label>
-              <input
-                className="m-3 w-2/3 rounded-md border border-slate-500 p-3 text-slate-950"
-                name="comment_text"
-                type="text"
-                id="comment"
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="flex w-4/5 justify-end">
-              <button
-                className="m-3 w-1/3 rounded-md bg-slate-700 p-3"
-                type="submit"
-              >
-                Post
-              </button>
-            </div>
-          </form>
-        </>
-      )}
-      {comments.length > 0 && (
-        <>
-          <h3 className="text-xl">Comments</h3>
-          <ul>
-            {comments.map((comment, index) => (
 
-              <li key={comment.comment_id ?? index}>
-                <div className="rounded-md border border-slate-200 bg-slate-800 p-3 text-slate-100">
-                  <span className="font-bold text-slate-200">
-                    On{' '}
-                    {new Date(comment.created_at!).toLocaleDateString('fi-FI')}{' '}
-                  </span>
-                  <span className="font-bold text-slate-200">
-                    {comment.username} wrote:
-                  </span>
-                  <span className="ml-2">{comment.comment_text}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
+      <form onSubmit={handleSubmit} className="mb-6">
+
+        <div className="flex flex-col md:flex-row items-center gap-4 mt-10">
+
+          <label htmlFor="comment" className="block font-bold mb-2 md:mb-0 md:text-right flex-start w-full md:w-1/4">
+            Post a comment:
+          </label>
+          <input
+            className="flex-grow shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white"
+            id="comment"
+            name="comment_text"
+            type="text"
+            placeholder="Your comment"
+            onChange={handleInputChange}
+          />
+        </div>
+        <div className="flex justify-end mt-4">
+          <button
+            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Post
+          </button>
+        </div>
+      </form>
     </>
+  )}
+  {comments.length > 0 && (
+    <>
+      <h3 className="text-xl font-bold text-gray-900 mb-4">Comments</h3>
+      <ul className="space-y-4">
+        {comments.map((comment, index) => (
+          <li key={comment.comment_id ?? index} className="bg-white shadow rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-gray-900">{comment.username}</span>
+              <span className="text-sm text-gray-500">{new Date(comment.created_at!).toLocaleDateString('fi-FI')}</span>
+            </div>
+            <p className="mt-2 text-gray-700">{comment.comment_text}</p>
+          </li>
+        ))}
+      </ul>
+    </>
+  )}
+</>
   );
 };
 

@@ -72,7 +72,7 @@ const Single = () => {
         }
       });
     }
-  }, [item.media_id, getRatingsByMediaID]);
+  }, []);
 
   const handleRatingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUserRating(parseInt(e.target.value, 10));
@@ -85,9 +85,9 @@ const Single = () => {
         console.error('Authentication required');
         return;
       }
-      await postRating(item.media_id, userRating, token); // Use userRating for submission
+      await postRating(item.media_id, userRating, token);
       alert('Rating submitted successfully');
-      // Consider re-fetching the rating here if it needs to be updated after submission
+
     } catch (error) {
       console.error('Error submitting rating:', error);
       alert('Failed to submit rating');
@@ -96,67 +96,70 @@ const Single = () => {
 
 
   return (
-    <>
-      <h3>{item.title}</h3>
+    <div className="max-w-4xl mx-auto py-6 px-4">
+      <h3 className="text-2xl font-bold text-gray-900 mb-4">{item.title}</h3>
       {item.media_type.includes('video') ? (
-        <video controls src={item.filename}></video>
+        <video controls src={item.filename} className="w-full h-auto rounded-lg"></video>
       ) : (
-        <img src={item.filename} alt={item.title} />
+        <img src={item.filename} alt={item.title} className="w-full max-h-96 h-auto rounded-lg object-contain"/>
       )}
-      <Likes item={item} />
-    {/* Conditional rendering based on the user being the owner or an admin */}
-    {user && (Number(user.user_id) === Number(item.user_id) || user.level_name === 'Admin') && (
-      <>
-               <div>
-               <label>
-                 Rate this item:
-                 <input type="range" min="0" max="10" value={userRating} onChange={handleRatingChange} />
-                 <span> {userRating}</span> {/* Displaying the user's set rating value */}
-               </label>
-               <button onClick={submitRating}>Submit Rating</button>
-             </div>
-                    <div>
-                    <label>
-                      Assign Tag:
-                      <select value={selectedTag} onChange={handleTagChange}>
-                        <option value="">Select Tag</option>
-                        {tags.map((tag) => (
-                          <option key={tag} value={tag}>
-                            {tag}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <button onClick={submitTagAssignment}>Assign Tag</button> {/* Add this line */}
-                  </div>
-      </>
+      <div className="mt-4">
+        <Likes item={item} />
+      </div>
+      {user && (Number(user.user_id) === Number(item.user_id) || user.level_name === 'Admin') && (
+        <div className="mt-4 space-y-4">
+          <div>
+            <label className="block font-bold">
+              Rate this item:
+              <input type="range" min="0" max="10" value={userRating} onChange={handleRatingChange} className="mt-1 w-full h-2 bg-gray-200 rounded-lg"/>
+              <span className="ml-2 text-sm text-gray-500">{userRating}</span>
+            </label>
+            <button onClick={submitRating} className="mt-2 px-4 py-2 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-700">
+              Submit Rating
+            </button>
+          </div>
+          <div>
+            <label className="block font-bold">
+              Assign Tag:
+              <select value={selectedTag} onChange={handleTagChange} className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md">
+                <option value="">Select Tag</option>
+                {tags.map((tag) => (
+                  <option key={tag} value={tag}>{tag}</option>
+                ))}
+              </select>
+            </label>
+            <button onClick={submitTagAssignment} className="mt-2 px-4 py-2 bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-700">
+              Assign Tag
+            </button>
+          </div>
+        </div>
       )}
-      <p>Status:</p>
-      {currentTags.length > 0 ? (
-        currentTags.map((tag) => <span key={tag.tag_id}>{tag.tag_name}</span>) // Display each tag
-      ) : (
-        <span>No status assigned</span>
-      )}
-      {/* Display the fetched average or specific rating for all viewers */}
-      <span> {userRating || "Not rated yet"}</span>
-      {/* Rest of the component */}
-      <p>{item.description}</p>
-      <p>
-        Uploaded at: {new Date(item.created_at).toLocaleString('fi-FI')}, by: {item.owner.username}
-      </p>
-       {/* Add the dropdown menu for selecting a tag */}
-
-      {/* <p>{item.filesize}</p> */}
-      <p>{item.media_type}</p>
-      <button
-        onClick={() => {
-          navigate(-1);
-        }}
-      >
-        go back
-      </button>
+      <div className="mt-4">
+        <p className="font-bold">Status:</p>
+        {currentTags.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {currentTags.map((tag) => (
+              <span key={tag.tag_id} className="px-3 py-1 bg-sky-100 text-sky-800 font-medium rounded-full">{tag.tag_name}</span>
+            ))}
+          </div>
+        ) : (
+          <span className="text-gray-500">No status assigned</span>
+        )}
+      </div>
+      <div className="mt-4">
+        <span className="font-bold">Rating:</span> {userRating || "Not rated yet"}/10
+      </div>
+      <div className="mt-4">
+        <p><span className="font-bold">Notes:</span> {item.description || "No description provided."}</p>
+        <p><a className="font-bold">Uploaded at:</a> {new Date(item.created_at).toLocaleString('fi-FI')}, by: {item.owner.username}</p>
+      </div>
+      <div className="mt-4">
+        <button onClick={() => navigate(-1)} className="px-4 py-2 bg-gray-300 text-gray-800 font-bold rounded-lg hover:bg-gray-400">
+          Go back
+        </button>
+      </div>
       <Comments item={item} />
-    </>
+    </div>
   );
 };
 

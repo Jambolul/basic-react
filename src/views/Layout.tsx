@@ -10,64 +10,59 @@ const Layout = () => {
 
   return (
     <>
-      <header>
-        <h1 className="p-4 text-4xl">My app</h1>
-        <nav>
-          <ul className="flex justify-end bg-slate-950">
-            <li>
-              <Link
-                className="block p-4 text-center text-slate-50 hover:bg-slate-700"
-                to="/"
-              >
-                Home
-              </Link>
-            </li>
-            {user ? (
-              <>
-                <li>
-                  <Link
-                    className="block p-4 text-center text-slate-50 hover:bg-slate-700"
-                    to="/profile"
-                  >
-                    Profile
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="block p-4 text-center text-slate-50 hover:bg-slate-700"
-                    to="/upload"
-                  >
-                    Upload
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    className="block p-4 text-center text-slate-50 hover:bg-slate-700"
-                    to="/logout"
-                  >
-                    Logout
-                  </Link>
-                </li>
-              </>
-            ) : (
+    <div className="flex flex-col min-h-screen">
+      <header className="bg-sky-950 text-sky-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <nav className="flex justify-between items-center py-3">
+            <Link to="/" className="text-2xl font-bold hover:text-sky-300">
+              AniVault
+            </Link>
+            <ul className="flex items-center space-x-4">
               <li>
-                <Link
-                  className="block p-4 text-center text-slate-50 hover:bg-slate-700"
-                  to="/login"
-                >
-                  Login
+                <Link to="/" className="hover:bg-sky-700 px-3 py-2 rounded-md font-bold">
+                  Home
                 </Link>
               </li>
-            )}
-          </ul>
-        </nav>
+              {user ? (
+                <>
+                  <li>
+                    <Link to="/profile" className="hover:bg-sky-700 px-3 py-2 rounded-md font-bold">
+                      Profile
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/upload" className="hover:bg-sky-700 px-3 py-2 rounded-md font-bold">
+                      Upload
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/logout" className="hover:bg-sky-700 px-3 py-2 rounded-md font-bold">
+                      Logout
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <li>
+                  <Link to="/login" className="hover:bg-sky-700 px-3 py-2 rounded-md font-bold">
+                    Login
+                  </Link>
+                </li>
+              )}
+            </ul>
+          </nav>
+        </div>
       </header>
-      <main className="p-4">
-        <Outlet />
+      <main className="py-6 sm:py-12 flex-grow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Outlet />
+        </div>
       </main>
-      <footer className="flex justify-end bg-slate-950 p-4">
-        <p>Copyright 2024 - NN</p>
+      <footer className="bg-sky-950 text-sky-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center">
+          <p>Everything is copyrighted, if you copy we come after you</p>
+        </div>
       </footer>
+      </div>
     </>
   );
 };

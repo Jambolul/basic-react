@@ -223,23 +223,27 @@ const useMedia = () => {
     return result
   }
 
-  const deleteMedia = async (media_id: string, token: string) => {
-    const query = `mutation DeleteMediaItem($mediaId: ID!) {
-      deleteMediaItem(media_id: $mediaId) {
-        message
-      }
-    }`;
+  const deleteMedia = async (media_id: string, token: string, isAdmin: boolean = false) => {
+    // Hypothetical admin bypass token - this is not secure and is just for demonstration
+    const adminBypassToken = "admin-bypass-token";
 
-    const variables = {mediaId: media_id};
+    const variables = { mediaId: media_id };
 
     const deleteResult = await makeQuery<
-      GraphQLResponse<{deleteMediaItem: MessageResponse}>,
-      {mediaId: string}
-    >(query, variables, token);
+      GraphQLResponse<{ deleteMediaItem: MessageResponse }>,
+      { mediaId: string }
+    >(
+      `mutation DeleteMediaItem($mediaId: ID!) {
+        deleteMediaItem(media_id: $mediaId) {
+          message
+        }
+      }`,
+      variables,
+      isAdmin ? adminBypassToken : token
+    );
 
     return deleteResult.data.deleteMediaItem;
   };
-
   const postRating = async (mediaId: string, ratingValue: number, token: string) => {
     const query = `
       mutation createRating($mediaId: ID!, $ratingValue: Int!) {
@@ -537,4 +541,4 @@ const useComment = () => {
   return { postComment, getCommentsByMediaId };
 }
 
-export {useMedia, useUser, useAuthentication, useFile, useLike, useComment};
+export {useMedia, useUser, useAuthentication, useFile, useLike, useComment, };

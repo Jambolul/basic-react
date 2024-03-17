@@ -1,10 +1,9 @@
 import {useState} from 'react';
 import {useForm} from '../hooks/formHooks';
-// import {useFile, useMedia} from '../hooks/apiHooks';
+// Import your hooks accordingly
 import {useFile, useMedia} from '../hooks/graphQLHooks';
 import {useNavigate} from 'react-router-dom';
 
-// Upload.tsx
 const Upload = () => {
   const [file, setFile] = useState<File | null>(null);
   const {postFile} = useFile();
@@ -20,26 +19,21 @@ const Upload = () => {
   const doUpload = async () => {
     try {
       const token = localStorage.getItem('token');
-        if (!token || !file) {
-          return;
-        }
-        // TODO: call postFile function (see below)
-        const fileResult = await postFile(file, token);
-        console.log(fileResult);
-        // TODO: call postMedia function (see below)
-        const mediaResult = await postMedia(fileResult, inputs, token);
-        console.log("TESTI"+ inputs);
-        console.log(mediaResult);
+      if (!token || !file) {
+        return;
+      }
+      const fileResult = await postFile(file, token);
+      console.log(fileResult);
+      const mediaResult = await postMedia(fileResult, inputs, token);
+      console.log("TESTI" + inputs);
+      console.log(mediaResult);
 
-        alert("Media uploaded");
-        // TODO: redirect to Home
-        navigate('/');
-      } catch (e) {
+      alert("Media uploaded");
+      navigate('/');
+    } catch (e) {
       console.log((e as Error).message);
     }
   };
-
-
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -47,70 +41,59 @@ const Upload = () => {
     }
   };
 
-  const {handleSubmit, handleInputChange, inputs} = useForm(
-    doUpload,
-    initValues,
-  );
+  const {handleSubmit, handleInputChange, inputs} = useForm(doUpload, initValues);
 
   return (
     <>
-      <h1 className="text-3xl">Upload</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="flex w-4/5">
-          <label className="w-1/3 p-6 text-end" htmlFor="title">
-            Title
-          </label>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">Upload</h1>
+      <form onSubmit={handleSubmit} className="max-w-4xl mx-auto">
+        <div className="mb-4">
+          <label className="block text-gray-900 font-bold mb-2" htmlFor="title">Title</label>
           <input
-            className="m-3 w-2/3 rounded-md border border-slate-500 p-3 text-slate-50"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline bg-gray-50"
             name="title"
             type="text"
             id="title"
             onChange={handleInputChange}
+            placeholder="Enter a title for your upload"
+            required
           />
         </div>
-        <div className="flex w-4/5">
-          <label className="w-1/3 p-6 text-end" htmlFor="description">
-            Description
-          </label>
+        <div className="mb-4">
+          <label className="block text-gray-900 font-bold mb-2" htmlFor="description">Description</label>
           <textarea
-            className="m-3 w-2/3  rounded-md border border-slate-500 p-3 text-slate-50"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline bg-gray-50"
             name="description"
             rows={5}
             id="description"
             onChange={handleInputChange}
+            placeholder="Describe your upload (Optional)"
           ></textarea>
         </div>
-
-        <div className="flex w-4/5">
-          <label className="w-1/3 p-6 text-end" htmlFor="file">
-            File
-          </label>
+        <div className="mb-4">
+          <label className="block text-gray-900 font-bold mb-2" htmlFor="file">File</label>
           <input
-            className="m-3 w-2/3 rounded-md border border-slate-500 p-3 text-slate-50"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-900 leading-tight focus:outline-none focus:shadow-outline bg-gray-50"
             name="file"
             type="file"
             id="file"
             accept="image/*, video/*"
             onChange={handleFileChange}
+            required
           />
         </div>
-        <div className="flex w-4/5 justify-end">
+        <div className="flex w-full justify-center my-4">
           <img
-            className="w-2/3 p-6"
-            src={
-              file
-                ? URL.createObjectURL(file)
-                : 'https://via.placeholder.com/200?text=Choose+image'
-            }
+            className="max-w-xs"
+            src={file ? URL.createObjectURL(file) : 'https://via.placeholder.com/200?text=Choose+image'}
             alt="preview"
-            width="200"
           />
         </div>
-        <div className="flex w-4/5 justify-end">
+        <div className="flex justify-end">
           <button
-            className="m-3 w-1/3 rounded-md bg-slate-600 p-3 disabled:text-slate-50"
+            className="bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="submit"
-            disabled={file && inputs.title.length > 3 ? false : true}
+            disabled={!file || inputs.title.length === 0} // Ensure a file is selected and the title is not empty
           >
             Upload
           </button>
